@@ -1,16 +1,17 @@
 #!/bin/sh
 
-# Check if user settings.json exists
-if [ -f "/config/settings.json" ]; then
-    echo "Using existing /config/settings.json"
-    cp /config/settings.json /usr/src/api/config/settings.json
+set -e
+
+# Copy default settings if no user config
+if [ ! -f "/config/settings.json" ]; then
+  echo "No /config/settings.json found, copying default to /config"
+  cp /usr/src/api/config/settings.default.json /config/settings.json
 else
-    echo "No /config/settings.json found, copying default"
-    cp /usr/src/api/config/settings.default.json /usr/src/api/config/settings.json
+  echo "Using existing /config/settings.json"
 fi
 
-# Make config readable
-chmod 644 /usr/src/api/config/settings.json
+# Make sure config is readable
+chmod 644 /config/settings.json
 
-# Start app
+# Start the app
 exec "$@"
